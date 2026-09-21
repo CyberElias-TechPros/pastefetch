@@ -1,0 +1,6 @@
+fastapi>=0.115
+uvicorn[standard]>=0.32
+httpx>=0.27
+yt-dlp[default]>=2026.1.1
+curl_cffi>=0.7      # browser impersonation — materially improves TikTok/Vimeo success
+pydantic>=2.9

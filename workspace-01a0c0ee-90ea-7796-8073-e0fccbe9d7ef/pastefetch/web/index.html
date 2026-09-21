@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>PasteFetch — download video from any link, cleanly</title>
+  <meta name="description" content="Paste a link from YouTube, TikTok, Instagram, X, Reddit, Vimeo and 1,000+ sites and get a clean file. No ads, no fake buttons, no accounts, nothing stored.">
+  <meta name="theme-color" content="#05060b">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://pastefetch.pages.dev/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PasteFetch">
+  <meta property="og:title" content="PasteFetch — any link, one clean download">
+  <meta property="og:description" content="Paste a video link. Pick a quality. Save the file. No ads, no fake buttons, nothing stored.">
+  <meta property="og:image" content="https://pastefetch.pages.dev/og.jpg">
+  <meta property="og:url" content="https://pastefetch.pages.dev/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PasteFetch — any link, one clean download">
+  <meta name="twitter:description" content="Paste a video link. Pick a quality. Save the file. No ads, no fake buttons, nothing stored.">
+  <meta name="twitter:image" content="https://pastefetch.pages.dev/og.jpg">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js"></script>
+  <script src="app.js" defer></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PasteFetch",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web",
+    "description": "Clean, free video downloader. Paste a link from YouTube, TikTok, Instagram, X, Reddit, Vimeo and 1,000+ sites. No ads, no accounts, nothing stored.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+  <!-- atmosphere -->
+  <div class="atmosphere" aria-hidden="true">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <a class="skip-link" href="#main">Skip to downloader</a>
+
+  <header class="topbar reveal" style="--d:0">
+    <a class="logo" href="/" aria-label="PasteFetch home">
+      <span class="logo-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>
+      </span>
+      PasteFetch
+    </a>
+    <nav class="topnav" aria-label="Site">
+      <a href="#status-anchor">Status</a>
+      <a href="https://github.com/pastefetch/pastefetch" rel="noopener">GitHub</a>
+      <span class="uptime-pill" id="uptimePill" title="Live platform status">
+        <span class="uptime-dot" aria-hidden="true"></span><span id="uptimeText">checking status…</span>
+      </span>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <p class="eyebrow reveal" style="--d:.08s">
+        <span class="pulse-dot" aria-hidden="true"></span> free &nbsp;·&nbsp; open source &nbsp;·&nbsp; no ads
+      </p>
+      <h1 class="reveal" style="--d:.16s">Any link.<br><span class="grad-text">One clean download.</span></h1>
+      <p class="hero-sub reveal" style="--d:.24s">
+        Paste a video from YouTube, TikTok, Instagram, X, Reddit, Vimeo and
+        1,000&nbsp;+&nbsp;sites. No pop-ups. No fake buttons. Nothing stored.
+      </p>
+
+      <form class="fetchbox reveal" style="--d:.34s" id="fetchForm" autocomplete="off" novalidate>
+        <label class="visually-hidden" for="urlInput">Video link</label>
+        <div class="urlwrap">
+          <svg class="link-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <input id="urlInput" type="url" inputmode="url" spellcheck="false" placeholder="https:// paste a video link…" aria-describedby="inputHint">
+          <button type="button" class="paste-btn" id="pasteBtn" hidden>Paste</button>
+        </div>
+        <button type="submit" class="go" id="goBtn">
+          <span class="go-label">Fetch</span>
+          <svg class="go-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </form>
+      <p class="input-hint reveal" style="--d:.42s" id="inputHint" aria-live="polite">press <kbd>⌘V</kbd> anywhere &nbsp;·&nbsp; <kbd>Enter</kbd> to fetch</p>
+
+      <div class="recent reveal" style="--d:.5s" id="recentWrap" hidden>
+        <span class="recent-label">recent</span>
+        <div class="recent-list" id="recentList"></div>
+      </div>
+    </section>
+
+    <section class="stage" id="status-anchor">
+      <!-- resolving state -->
+      <div class="card resolving" id="resolvingCard" hidden aria-live="polite">
+        <div class="shimmer-thumb" aria-hidden="true"></div>
+        <div class="resolving-lines">
+          <div class="sline w60"></div>
+          <div class="sline w40"></div>
+          <div class="rprog"><span class="rprog-label" id="resolvingLabel">Resolving…</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
+        </div>
+      </div>
+
+      <!-- error state -->
+      <div class="card errorcard" id="errorCard" hidden aria-live="polite">
+        <div class="errglow" aria-hidden="true"></div>
+        <h2 id="errorTitle">Couldn't fetch that</h2>
+        <p id="errorMessage">Something went wrong.</p>
+        <p class="errmeta" id="errorMeta"></p>
+      </div>
+
+      <!-- result state -->
+      <article class="card result" id="resultCard" hidden aria-live="polite">
+        <span class="demo-pill" id="demoPill" hidden>Demo mode — sample data <span class="demo-why" id="demoWhy"></span></span>
+        <div class="res-top">
+          <div class="thumb" id="thumbBox">
+            <img id="thumbImg" alt="" loading="lazy">
+            <span class="thumb-fallback" aria-hidden="true">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+            </span>
+            <span class="dur" id="durBadge"></span>
+          </div>
+          <div class="res-meta">
+            <span class="pbadge" id="platformBadge"></span>
+            <h2 id="resTitle"></h2>
+            <p class="res-author" id="resAuthor"></p>
+          </div>
+        </div>
+        <div class="qualities" id="qualities" role="group" aria-label="Choose a quality"></div>
+        <div class="res-foot">
+          <p class="note">Streamed straight to you — deleted from memory the moment it finishes.<br><a class="direct-link" id="directLink" href="#" target="_blank" rel="noopener">direct CDN link</a> if you prefer.</p>
+          <button class="dl" id="dlBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>
+            <span id="dlLabel">Download</span>
+          </button>
+        </div>
+      </article>
+    </section>
+
+    <section class="why reveal" style="--d:.6s" aria-label="What clean means">
+      <div class="why-item"><span class="why-num">0</span><span>ads · trackers<br>fake buttons</span></div>
+      <div class="why-sep" aria-hidden="true"></div>
+      <div class="why-item"><span class="why-num">0</span><span>copies kept — files<br>stream through, never stored</span></div>
+      <div class="why-sep" aria-hidden="true"></div>
+      <div class="why-item"><span class="why-num">0</span><span>accounts · installs<br>sign-ups</span></div>
+    </section>
+
+    <section class="status-section" aria-label="Platform status">
+      <h2 class="status-heading">Platform status <span class="status-sub">— checked every 6 hours, shown honestly</span></h2>
+      <div class="platforms" id="platformChips"></div>
+      <p class="status-note" id="statusNote"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Only download content you own, have permission to save, or that is free to reuse.<br>
+    Respect each platform's terms of service.</p>
+    <p class="footer-links">
+      <a href="https://github.com/pastefetch/pastefetch" rel="noopener">GitHub</a> ·
+      <a href="https://github.com/pastefetch/pastefetch/blob/main/docs/SECURITY.md">Terms &amp; privacy posture</a> ·
+      <a href="https://github.com/pastefetch/pastefetch#readme">Self-host in 5 minutes</a>
+    </p>
+    <p class="footer-fine">PasteFetch is a utility for links you're allowed to save. Made clean, kept clean.</p>
+  </footer>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+</body>
+</html>

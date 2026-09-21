@@ -1,0 +1,30 @@
+name = "pastefetch"
+main = "src/index.ts"
+compatibility_date = "2026-01-15"
+
+# ── D1 ────────────────────────────────────────────────────────────────────────
+# 1) npx wrangler d1 create pastefetch
+# 2) paste the printed database_id below
+[[d1_databases]]
+binding = "DB"
+database_name = "pastefetch"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+# ── Canary cron (platform health + job pruning every 6 h) ─────────────────────
+[triggers]
+crons = ["0 */6 * * *"]
+
+# ── Single-deploy mode (optional alternative to Cloudflare Pages) ─────────────
+# Serves web/ from the same worker origin (API_BASE stays '' in web/config.js).
+# [assets]
+# directory = "../web"
+
+[observability]
+enabled = true
+
+# Secrets (never in this file — use `wrangler secret put …`):
+#   IP_SALT          salt for hashing IPs/URLs in logs (openssl rand -hex 32)
+#   ALLOWED_ORIGINS  comma-separated origins, default "*" (dev only)
+#   RESOLVER_URL     e.g. https://you-pastefetch-resolver.hf.space
+#   RESOLVER_TOKEN   shared secret, same value as the resolver's env

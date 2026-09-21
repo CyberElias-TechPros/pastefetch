@@ -1,0 +1,13 @@
+{
+  "name": "PasteFetch — clean video downloader",
+  "short_name": "PasteFetch",
+  "description": "Paste a link from any social platform and get a clean file. No ads, no accounts, nothing stored.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#05060b",
+  "theme_color": "#05060b",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "og.jpg", "sizes": "1200x630", "type": "image/jpeg", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PasteFetch — wireframe</title>
+<style>
+  :root {
+    --ink: #0f172a; --muted: #64748b; --line: #e2e8f0;
+    --bg: #f8fafc; --card: #ffffff; --accent: #4f46e5; --accent-ink: #4338ca;
+    --ok: #16a34a; --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--ink); min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 20px 60px;
+  }
+  header {
+    width: 100%; max-width: 880px; display: flex; align-items: center;
+    justify-content: space-between; padding: 22px 4px 10px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+  .logo .mark {
+    width: 34px; height: 34px; border-radius: 10px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center; color: #fff;
+  }
+  nav { display: flex; align-items: center; gap: 18px; font-size: 14px; color: var(--muted); }
+  nav a { color: var(--muted); text-decoration: none; }
+  nav a:hover { color: var(--ink); }
+  .badge {
+    font-size: 11px; font-weight: 600; color: var(--ok);
+    background: #dcfce7; border-radius: 999px; padding: 3px 9px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+
+  .hero { text-align: center; margin-top: 46px; max-width: 640px; }
+  .hero h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.12; }
+  .hero p { margin-top: 14px; color: var(--muted); font-size: 17px; line-height: 1.5; }
+
+  .fetchbox {
+    margin: 30px auto 0; width: 100%; max-width: 640px;
+    display: flex; gap: 10px; align-items: stretch;
+  }
+  .fetchbox .urlwrap {
+    flex: 1; position: relative; display: flex; align-items: center;
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 999px;
+    padding-left: 18px; transition: border-color .15s, box-shadow .15s;
+  }
+  .fetchbox .urlwrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(79,70,229,.12); }
+  .fetchbox input {
+    flex: 1; border: none; outline: none; font-size: 15.5px; padding: 16px 14px 16px 2px;
+    background: transparent; color: var(--ink); min-width: 0;
+  }
+  .fetchbox input::placeholder { color: #94a3b8; }
+  .paste-btn {
+    border: none; background: #f1f5f9; color: var(--muted); font-size: 13px; font-weight: 600;
+    border-radius: 999px; padding: 8px 14px; margin-right: 10px; cursor: pointer; white-space: nowrap;
+  }
+  .paste-btn:hover { background: #e2e8f0; color: var(--ink); }
+  .go {
+    border: none; background: var(--accent); color: #fff; font-size: 15px; font-weight: 700;
+    border-radius: 999px; padding: 0 28px; cursor: pointer; white-space: nowrap;
+  }
+  .go:hover { background: var(--accent-ink); }
+
+  .platforms { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .chip {
+    font-size: 12.5px; font-weight: 600; color: var(--muted);
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 13px; display: flex; align-items: center; gap: 6px;
+  }
+  .chip .pdot { width: 7px; height: 7px; border-radius: 50%; background: #cbd5e1; }
+  .chip.up .pdot { background: var(--ok); }
+  .chip.down .pdot { background: #ef4444; }
+  .chip.down { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+  .sample { margin-top: 14px; font-size: 13px; color: #94a3b8; }
+  .sample button { border: none; background: none; color: var(--accent); font-weight: 600; cursor: pointer; font-size: 13px; }
+
+  /* result card */
+  #resultCard {
+    margin: 34px auto 0; width: 100%; max-width: 640px; background: var(--card);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(15,23,42,.07); overflow: hidden; display: none;
+  }
+  .res-top { display: flex; gap: 16px; padding: 18px 18px 6px; }
+  .thumb {
+    width: 168px; height: 94px; border-radius: 10px; flex-shrink: 0; position: relative;
+    background: linear-gradient(135deg, #312e81, #6d28d9 60%, #db2777);
+    display: flex; align-items: center; justify-content: center; color: #fff;
+  }
+  .thumb .dur {
+    position: absolute; right: 6px; bottom: 6px; background: rgba(0,0,0,.65);
+    font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 5px;
+  }
+  .res-meta { min-width: 0; padding-top: 2px; }
+  .res-meta .pbadge {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700;
+    color: var(--accent-ink); background: #eef2ff; border-radius: 6px; padding: 3px 8px;
+  }
+  .res-meta h3 { margin-top: 8px; font-size: 15.5px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+  .res-meta .author { margin-top: 4px; font-size: 13px; color: var(--muted); }
+
+  .qualities { padding: 14px 18px 4px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .q {
+    border: 1.5px solid var(--line); background: #fff; border-radius: 10px;
+    padding: 9px 14px; font-size: 13.5px; font-weight: 600; color: var(--ink);
+    cursor: pointer; display: flex; align-items: center; gap: 7px; position: relative;
+  }
+  .q:hover { border-color: #c7d2fe; background: #f8faff; }
+  .q.sel { border-color: var(--accent); background: #eef2ff; color: var(--accent-ink); }
+  .q .tag {
+    font-size: 10px; font-weight: 700; color: var(--ok); background: #dcfce7;
+    border-radius: 5px; padding: 2px 6px;
+  }
+  .res-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 18px 18px;
+  }
+  .res-foot .note { font-size: 12px; color: #94a3b8; line-height: 1.45; }
+  .dl {
+    border: none; background: var(--ink); color: #fff; font-size: 14.5px; font-weight: 700;
+    border-radius: 12px; padding: 13px 26px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+  .dl:hover { background: #1e293b; }
+
+  .steps {
+    margin-top: 60px; width: 100%; max-width: 880px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  @media (max-width: 640px) { .steps { grid-template-columns: 1fr; } .res-top { flex-direction: column; } }
+  .step {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px;
+  }
+  .step .n {
+    width: 26px; height: 26px; border-radius: 8px; background: #eef2ff; color: var(--accent-ink);
+    font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+  }
+  .step h4 { margin-top: 12px; font-size: 14.5px; font-weight: 700; }
+  .step p { margin-top: 6px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  footer {
+    margin-top: 56px; max-width: 640px; text-align: center;
+    font-size: 12.5px; color: #94a3b8; line-height: 1.6;
+  }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="mark">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/>
+      </svg>
+    </div>
+    PasteFetch
+  </div>
+  <nav>
+    <a href="#">Status</a>
+    <a href="#">API</a>
+    <a href="#">GitHub</a>
+    <span class="badge"><span class="dot"></span>7 of 8 platforms up</span>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Any link. One clean download.</h1>
+  <p>Paste a video link from YouTube, TikTok, Instagram, X, Reddit and more.<br>No ads. No fake buttons. No accounts. Nothing stored.</p>
+</section>
+
+<div class="fetchbox">
+  <div class="urlwrap">
+    <input id="url" type="text" placeholder="https:// paste a video link…" spellcheck="false" autocomplete="off">
+    <button class="paste-btn" onclick="fillSample()">Use sample</button>
+  </div>
+  <button class="go" id="goBtn" onclick="resolve()">Fetch</button>
+</div>
+
+<div class="platforms">
+  <span class="chip up"><span class="pdot"></span>TikTok</span>
+  <span class="chip up"><span class="pdot"></span>Instagram</span>
+  <span class="chip up"><span class="pdot"></span>X</span>
+  <span class="chip up"><span class="pdot"></span>Facebook</span>
+  <span class="chip up"><span class="pdot"></span>Reddit</span>
+  <span class="chip up"><span class="pdot"></span>Vimeo</span>
+  <span class="chip up"><span class="pdot"></span>Twitch</span>
+  <span class="chip down" title="Degraded — see status page"><span class="pdot"></span>YouTube</span>
+</div>
+
+<div id="resultCard">
+  <div class="res-top">
+    <div class="thumb">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+      <span class="dur">0:41</span>
+    </div>
+    <div class="res-meta">
+      <span class="pbadge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.5 5v1.5c1.4 0 2.5.6 2.5 1.9h-1.6c0-.4-.4-.6-1-.6s-1 .2-1 .6c0 .5.5.7 1.4.9 1.5.3 2.7.8 2.7 2.4 0 1.3-1 2-2.5 2.2V17h-1v-1.1c-1.5-.1-2.7-.8-2.7-2.2h1.6c0 .6.6.9 1.4.9.7 0 1.1-.3 1.1-.7 0-.5-.6-.7-1.5-.9-1.4-.3-2.6-.8-2.6-2.3 0-1.2 1-1.9 2.2-2.1V7h1z"/></svg>
+        TikTok · public
+      </span>
+      <h3>Sunrise run through Lagos — 5am at the bridge 🌅</h3>
+      <div class="author">@ade.runs · 41 s · resolved in 2.3 s</div>
+    </div>
+  </div>
+
+  <div class="qualities" id="qualities">
+    <button class="q sel" onclick="pick(this)">1080p MP4 <span class="tag">BEST</span></button>
+    <button class="q" onclick="pick(this)">720p MP4</button>
+    <button class="q" onclick="pick(this)">480p MP4</button>
+    <button class="q" onclick="pick(this)">Audio · MP3</button>
+  </div>
+
+  <div class="res-foot">
+    <div class="note">Streamed straight to you — deleted from<br>our memory the moment it finishes.</div>
+    <button class="dl" onclick="downloadMock()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>
+      Download
+    </button>
+  </div>
+</div>
+
+<section class="steps">
+  <div class="step">
+    <div class="n">1</div>
+    <h4>Paste the link</h4>
+    <p>From the share sheet or address bar. Shortlinks (youtu.be, vm.tiktok.com) work fine.</p>
+  </div>
+  <div class="step">
+    <div class="n">2</div>
+    <h4>Pick a quality</h4>
+    <p>We show what we found — thumbnail, length, available formats. What you see is what downloads.</p>
+  </div>
+  <div class="step">
+    <div class="n">3</div>
+    <h4>Save the file</h4>
+    <p>The video streams through our servers to you. We never keep a copy — there's nothing to leak.</p>
+  </div>
+</section>
+
+<footer>
+  Only download content you own, have permission to save, or that is free to reuse.<br>
+  Respect each platform's terms of service. · <a href="#">Status</a> · <a href="#">Terms</a> · <a href="#">Privacy</a><br>
+  <span style="color:#cbd5e1">Wireframe mockup — interactions are illustrative.</span>
+</footer>
+
+<script>
+  var resolving = false;
+  function fillSample() {
+    document.getElementById('url').value = 'https://www.tiktok.com/@ade.runs/video/7301234567890123456';
+    document.getElementById('url').focus();
+  }
+  function resolve() {
+    var url = document.getElementById('url').value.trim();
+    var card = document.getElementById('resultCard');
+    if (!url) { document.getElementById('url').focus(); return; }
+    if (resolving) return;
+    resolving = true;
+    card.style.display = 'block';
+    var go = document.getElementById('goBtn');
+    go.textContent = 'Resolving…';
+    go.style.opacity = '0.7';
+    setTimeout(function () {
+      go.textContent = 'Fetch';
+      go.style.opacity = '1';
+      resolving = false;
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 1100);
+  }
+  function pick(el) {
+    var qs = document.querySelectorAll('.q');
+    for (var i = 0; i < qs.length; i++) qs[i].classList.remove('sel');
+    el.classList.add('sel');
+  }
+  function downloadMock() {
+    var btn = document.querySelector('.dl');
+    var old = btn.innerHTML;
+    btn.innerHTML = 'Preparing…';
+    setTimeout(function () { btn.innerHTML = old; }, 900);
+  }
+  document.getElementById('url').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') resolve();
+  });
+</script>
+</body>
+</html>
